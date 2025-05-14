@@ -28,8 +28,8 @@ point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
 image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
     .filterBounds(point) \
     .filterDate("2021-01-01", "2021-12-31") \
-    .median()
-    .first()
+    .median()\
+    .first()\
     .select('B.*')
 
 vis_params = image.normalizedDifference(["B8", "B4", "B3"]).rename("vis_params")
