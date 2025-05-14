@@ -69,11 +69,11 @@ legend_dict = {
 palette = list(legend_dict.values())
 vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
 
-left_layer = geemap.ee_tile_layer(my_image.Visualize(**vis_params), {}, 'S2_HARMONIZED')
-right_layer = geemap.ee_tile_layer(result001.Visualize(**vis_params_001), {}, 'wekaKMeans classified land cover')
+left_layer = geemap.ee_tile_layer(my_image.visualize(**vis_params), {}, 'S2_HARMONIZED')
+right_layer = geemap.ee_tile_layer(result001.visualize(**vis_params_001), {}, 'wekaKMeans classified land cover')
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(result001,vis_params_001, "Labelled clusters")
+Map.addLayer(vis_params,vis_params_001, "Labelled clusters")
 Map.split_map(left_layer, right_layer)
 Map.to_streamlit(height=600)
