@@ -27,7 +27,7 @@ region = point.buffer(1000).bounds()
 
 my_image = (
     ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-    .filterBounds(my_point)
+    .filterBounds(point)
     .filterDate('2021-01-01', '2022-01-01')
     .sort('CLOUDY_PIXEL_PERCENTAGE')
     .first()
