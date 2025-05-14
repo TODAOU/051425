@@ -23,7 +23,6 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 
 # 地理區域
 point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
-region = point.buffer(1000).bounds()
 
 my_image = (
     ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
@@ -39,7 +38,7 @@ vis_params = {'min': 100, 'max': 3500, 'bands': ['B4', 'B3', 'B2']}
 
 training001 = my_image.sample(
     **{
-        'region': region,  # 若不指定，則預設為影像my_image的幾何範圍。
+        'region': my_image.geometry(),  # 若不指定，則預設為影像my_image的幾何範圍。
         'scale': 10,
         'numPixels': 10000,
         'seed': 0,
