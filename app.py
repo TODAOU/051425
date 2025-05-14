@@ -29,7 +29,6 @@ my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED")
     .filterBounds(point) 
     .filterDate("2021-01-01", "2021-12-31") 
     .median()
-    .first()
     .select('B.*')
 )
 
@@ -61,9 +60,10 @@ legend_dict = {
 palette = list(legend_dict.values())
 vis_params_001 = {'min': 0, 'max': 4, 'palette': palette}
 
-
+left_layer = geemap.ee_tile_layer(my_image.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
+right_layer = geemap.ee_tile_layer(result001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(result001, vis_params_001, {"min": 100, "max": 3500, "palette": ["white", "green"]}, "Labelled clusters")
+Map.addLayer(my_image, result001, {"min": 100, "max": 3500, "palette": ["white", "green"]}, "Labelled clusters")
 Map.to_streamlit(height=600)
