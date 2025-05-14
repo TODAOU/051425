@@ -69,8 +69,8 @@ legend_dict = {
 palette = list(legend_dict.values())
 vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
 
-left_layer = geemap.ee_tile_layer(vis_params.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
-right_layer = geemap.ee_tile_layer(vis_params_001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
+left_layer = geemap.ee_tile_layer(vis_params.Visualizer(), {}, 'S2_HARMONIZED')
+right_layer = geemap.ee_tile_layer(vis_params_001.Visualizer(), {}, 'wekaKMeans classified land cover')
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
