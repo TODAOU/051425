@@ -60,7 +60,7 @@ legend_dict = {
     'six': '#0000ff',
     'seven': '#818181',
     'eight':'#00ffff',
-    'night':'#00ff00'
+    'nine':'#00ff00'
 }
 # 為分好的每一群賦予標籤
 
