@@ -1,1 +1,4 @@
+streamlist
+earthengine-api
 geemap
+google-auth
