@@ -25,12 +25,13 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
 
 # 擷取 Landsat NDVI
-my_image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
-    .filterBounds(point) \
-    .filterDate("2021-01-01", "2021-12-31") \
-    .median()\
-    .first()\
+my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED") 
+    .filterBounds(point) 
+    .filterDate("2021-01-01", "2021-12-31") 
+    .median()
+    .first()
     .select('B.*')
+)
 
 vis_params = image.normalizedDifference(["B8", "B4", "B3"]).rename("vis_params")
 
