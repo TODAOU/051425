@@ -24,15 +24,17 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 # 地理區域
 point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
 region = point.buffer(1000).bounds()
-# 擷取 Landsat NDVI
-my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED") 
-    .filterBounds(point) 
-    .filterDate("2021-01-01", "2021-12-31") 
-    .median()
+
+my_image = (
+    ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+    .filterBounds(my_point)
+    .filterDate('2021-01-01', '2022-01-01')
+    .sort('CLOUDY_PIXEL_PERCENTAGE')
+    .first()
     .select('B.*')
 )
 
-vis_params = my_image.normalizedDifference(["B4", "B3", "B2"]).rename("vis_params")
+vis_params = {'min': 100, 'max': 3500, 'bands': ['B4', 'B3', 'B2']}
 
 
 training001 = my_image.sample(
@@ -68,10 +70,10 @@ palette = list(legend_dict.values())
 vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
 
 left_layer = geemap.ee_tile_layer(vis_params.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
-right_layer = geemap.ee_tile_layer(result001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
+right_layer = geemap.ee_tile_layer(vis_params_001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(vis_params,result001, "Labelled clusters")
+Map.addLayer(vis_params,vis_params_001, "Labelled clusters")
 Map.split_map(left_layer, right_layer)
 Map.to_streamlit(height=600)
