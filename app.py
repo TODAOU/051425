@@ -32,8 +32,9 @@ my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED")
     .select('B.*')
 )
 
-vis_params = my_image.normalizedDifference(["B8", "B4", "B3"]).rename("vis_params")
+vis_params = my_image.normalizedDifference(["B4", "B3", "B2"]).rename("vis_params")
 
+n_clusters = 10
 training001 = my_image.sample(
     **{
         'region': my_image.geometry(),  # 若不指定，則預設為影像my_image的幾何範圍。
@@ -54,11 +55,16 @@ legend_dict = {
     'two': '#d99282',
     'three': '#466b9f',
     'four': '#ab6c28',
+    'five': '#ffff52',
+    'six': '#0000ff',
+    'seven': '#818181',
+    'eight':'#00ffff',
+    'night':'#00ff00'
 }
 # 為分好的每一群賦予標籤
 
 palette = list(legend_dict.values())
-vis_params_001 = {'min': 0, 'max': 4, 'palette': palette}
+vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
 
 left_layer = geemap.ee_tile_layer(my_image.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
 right_layer = geemap.ee_tile_layer(result001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
