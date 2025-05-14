@@ -34,7 +34,7 @@ my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED")
 
 vis_params = my_image.normalizedDifference(["B4", "B3", "B2"]).rename("vis_params")
 
-n_clusters = 10
+
 training001 = my_image.sample(
     **{
         'region': region,  # 若不指定，則預設為影像my_image的幾何範圍。
@@ -45,6 +45,7 @@ training001 = my_image.sample(
     }
 )
 
+n_clusters = 10
 clusterer_KMeans = ee.Clusterer.wekaKMeans(nClusters=n_clusters).train(training001)
 # ee.Clusterer.wekaKMeans().train() 使用K Means 演算法建立分群器進行訓練
 result001 = my_image.cluster(clusterer_KMeans)
@@ -66,11 +67,11 @@ legend_dict = {
 palette = list(legend_dict.values())
 vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
 
-left_layer = geemap.ee_tile_layer(my_image.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
+left_layer = geemap.ee_tile_layer(vis_params.randomVisualizer(), {}, 'wekaKMeans clustered land cover')
 right_layer = geemap.ee_tile_layer(result001.randomVisualizer(), {}, 'wekaXMeans classified land cover')
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(result001,vis_image, "Labelled clusters")
+Map.addLayer(vis_params,result001, "Labelled clusters")
 Map.split_map(left_layer, right_layer)
 Map.to_streamlit(height=600)
