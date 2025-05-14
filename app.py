@@ -74,6 +74,6 @@ right_layer = geemap.ee_tile_layer(result001.visualize(**vis_params_001), {}, 'w
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(vis_params,vis_params_001, "Labelled clusters")
+Map.addLayer(result001,vis_params_001, "Labelled clusters")
 Map.split_map(left_layer, right_layer)
 Map.to_streamlit(height=600)
