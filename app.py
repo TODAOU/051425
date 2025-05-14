@@ -32,7 +32,7 @@ my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED")
     .select('B.*')
 )
 
-vis_params = image.normalizedDifference(["B8", "B4", "B3"]).rename("vis_params")
+vis_params = my_image.normalizedDifference(["B8", "B4", "B3"]).rename("vis_params")
 
 training001 = my_image.sample(
     **{
