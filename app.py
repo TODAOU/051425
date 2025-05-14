@@ -25,7 +25,7 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
 
 # 擷取 Landsat NDVI
-image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
+my_image = ee.ImageCollection("COPERNICUS/S2_HARMONIZED") \
     .filterBounds(point) \
     .filterDate("2021-01-01", "2021-12-31") \
     .median()\
@@ -46,6 +46,7 @@ training001 = my_image.sample(
 
 clusterer_KMeans = ee.Clusterer.wekaKMeans(nClusters=n_clusters).train(training001)
 # ee.Clusterer.wekaKMeans().train() 使用K Means 演算法建立分群器進行訓練
+result001 = my_image.cluster(clusterer_KMeans)
 
 legend_dict = {
     'zero': '#ab0000',
