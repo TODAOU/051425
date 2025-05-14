@@ -23,7 +23,7 @@ st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 
 # 地理區域
 point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
-
+region = point.buffer(1000).bounds()
 # 擷取 Landsat NDVI
 my_image = (ee.ImageCollection("COPERNICUS/S2_HARMONIZED") 
     .filterBounds(point) 
@@ -37,7 +37,7 @@ vis_params = my_image.normalizedDifference(["B4", "B3", "B2"]).rename("vis_param
 n_clusters = 10
 training001 = my_image.sample(
     **{
-        'region': my_image.geometry(),  # 若不指定，則預設為影像my_image的幾何範圍。
+        'region': region,  # 若不指定，則預設為影像my_image的幾何範圍。
         'scale': 10,
         'numPixels': 10000,
         'seed': 0,
@@ -71,5 +71,6 @@ right_layer = geemap.ee_tile_layer(result001.randomVisualizer(), {}, 'wekaXMeans
 
 # 顯示地圖
 Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.addLayer(my_image, result001, {"min": 100, "max": 3500, "palette": ["white", "green"]}, "Labelled clusters")
+Map.addLayer(my_image, result001, "Labelled clusters")
+Map.split_map(left_layer, right_layer)
 Map.to_streamlit(height=600)
