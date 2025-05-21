@@ -1,78 +1,63 @@
 import streamlit as st
-import ee
-from google.oauth2 import service_account
-import geemap.foliumap as geemap
+from datetime import date
 
-# 從 Streamlit Secrets 讀取 GEE 服務帳戶金鑰 JSON
-service_account_info = st.secrets["GEE_SERVICE_ACCOUNT"]
+st.set_page_config(layout="wide", page_title="這是Streamlit App第二次練習！")
 
-# 使用 google-auth 進行 GEE 授權
-credentials = service_account.Credentials.from_service_account_info(
-    service_account_info,
-    scopes=["https://www.googleapis.com/auth/earthengine"]
+st.title("應用程式主頁")
+
+st.markdown(
+    """
+    This multipage app template demonstrates various interactive web apps created using [streamlit](https://streamlit.io), [GEE](https://earthengine.google.com/), 
+    [geemap](https://leafmap.org) and [leafmap](https://leafmap.org). 
+    """
 )
 
-# 初始化 GEE
-ee.Initialize(credentials)
+st.header("Instructions")
+
+markdown = """
+1. You can use it as a template for your own project.
+2. Customize the sidebar by changing the sidebar text and logo in each Python file.
+3. Find your favorite emoji from https://emojipedia.org.
+4. Add a new app to the `pages/` directory with an emoji in the file name, e.g., `1_🚀_Chart.py`.
+
+"""
+
+st.markdown(markdown)
 
 
-###############################################
-st.set_page_config(layout="wide")
-st.title("🌍 使用服務帳戶連接 GEE 的 Streamlit App")
 
 
-# 地理區域
-point = ee.Geometry.Point([120.5583462887228, 24.081653403304525])
-
-my_image = (
-    ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
-    .filterBounds(point)
-    .filterDate('2021-01-01', '2022-01-01')
-    .sort('CLOUDY_PIXEL_PERCENTAGE')
-    .first()
-    .select('B.*')
-)
-
-vis_params = {'min': 100, 'max': 3500, 'bands': ['B4', 'B3', 'B2']}
+st.title("選擇日期區間")
 
 
-training001 = my_image.sample(
-    **{
-        'region': my_image.geometry(),  # 若不指定，則預設為影像my_image的幾何範圍。
-        'scale': 10,
-        'numPixels': 10000,
-        'seed': 0,
-        'geometries': True,  # 設為False表示取樣輸出的點將忽略其幾何屬性(即所屬網格的中心點)，無法作為圖層顯示，可節省記憶體。
-    }
-)
+# 初始化 session_state
+#if 'start_date' not in st.session_state:
+#    st.session_state['start_date'] = date(2024, 1, 1)
+#if 'end_date' not in st.session_state:
+#    st.session_state['end_date'] = date.today()
 
-n_clusters = 10
-clusterer_KMeans = ee.Clusterer.wekaKMeans(nClusters=n_clusters).train(training001)
-# ee.Clusterer.wekaKMeans().train() 使用K Means 演算法建立分群器進行訓練
-result001 = my_image.cluster(clusterer_KMeans)
+st.session_state['start_date'] = date(2024, 1, 1)
+st.session_state['end_date'] = date.today()
 
-legend_dict = {
-    'zero': '#ab0000',
-    'one': '#1c5f2c',
-    'two': '#d99282',
-    'three': '#466b9f',
-    'four': '#ab6c28',
-    'five': '#ffff52',
-    'six': '#0000ff',
-    'seven': '#818181',
-    'eight':'#00ffff',
-    'nine':'#00ff00'
-}
-# 為分好的每一群賦予標籤
 
-palette = list(legend_dict.values())
-vis_params_001 = {'min': 0, 'max': 9, 'palette': palette}
+# 日期選擇器
+start_date = st.date_input(label = "選擇起始日期", value = st.session_state['start_date'], min_value = date(2018, 1, 1), max_value = date.today())
+end_date = st.date_input(label = "選擇結束日期", value = st.session_state['end_date'], min_value = start_date, max_value = date.today())
 
-left_layer = geemap.ee_tile_layer(my_image.visualize(**vis_params), {}, 'S2_HARMONIZED')
-right_layer = geemap.ee_tile_layer(result001.visualize(**vis_params_001), {}, 'wekaKMeans classified land cover')
+# 儲存使用者選擇
+st.session_state['start_date'] = start_date
+st.session_state['end_date'] = end_date
 
-# 顯示地圖
-Map = geemap.Map(center=[120.5583462887228, 24.081653403304525], zoom=10)
-Map.split_map(left_layer, right_layer)
-Map.add_legend(title="Cluster Labels", legend_dict=legend_dict)
-Map.to_streamlit(height=600)
+st.success(f"目前選擇的日期區間為：{start_date} 到 {end_date}")
+
+
+st.title("利用擴充器示範")
+
+with st.expander("展示gif檔"):
+    st.image("pucallpa.gif")
+
+with st.expander("播放mp4檔"):
+    video_file = open("pucallpa.mp4", "rb")  # "rb"指的是讀取二進位檔案（圖片、影片）
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+    
